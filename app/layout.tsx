@@ -12,8 +12,7 @@ export const metadata: Metadata = {
   description: "Développeur passionné et créateur de l'application TaskLife.",
   openGraph: {
     title: "AzerfaXx | Portfolio",
-    description:
-      "Découvrez mes projets et mon application TaskLife.",
+    description: "Découvrez mes projets et mon application TaskLife.",
     url: "https://azerfaxx.vercel.app",
     siteName: "AzerfaXx",
     images: [
@@ -26,6 +25,7 @@ export const metadata: Metadata = {
     locale: "fr-FR",
     type: "website",
   },
+  metadataBase: new URL("https://azerfaxx.vercel.app"), // ✅ ajouté
   robots: {
     index: true,
     follow: true,
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: "Chronark",
+    title: "AzerfaXx",
     card: "summary_large_image",
   },
   icons: {
