@@ -6,24 +6,24 @@ import { Analytics } from "./components/analytics";
 
 export const metadata: Metadata = {
   title: {
-    default: "chronark.com",
-    template: "%s | chronark.com",
+    default: "AzerfaXx | Portfolio",
+    template: "%s | AzerfaXx",
   },
-  description: "Co-founder of unkey.dev and founder of planetfall.io",
+  description: "Développeur passionné et créateur de l'application TaskLife.",
   openGraph: {
-    title: "chronark.com",
+    title: "AzerfaXx | Portfolio",
     description:
-      "Co-founder of unkey.dev and founder of planetfall.io",
-    url: "https://chronark.com",
-    siteName: "chronark.com",
+      "Découvrez mes projets et mon application TaskLife.",
+    url: "https://azerfaxx.vercel.app",
+    siteName: "AzerfaXx",
     images: [
       {
-        url: "https://chronark.com/og.png",
+        url: "https://azerfaxx.vercel.app/og.png",
         width: 1920,
         height: 1080,
       },
     ],
-    locale: "en-US",
+    locale: "fr-FR",
     type: "website",
   },
   robots: {
