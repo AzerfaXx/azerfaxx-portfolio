@@ -30,7 +30,7 @@ export default async function ProjectsPage() {
 		console.error("Failed to fetch page views from Redis:", e);
 	}
 
-	const featured = allProjects.find((project) => project.slug === "unkey")!;
+	const featured = allProjects.find((project) => project.slug === "tasklife")!;
 	const top2 = allProjects.find((project) => project.slug === "planetfall")!;
 	const top3 = allProjects.find((project) => project.slug === "highstorm")!;
 	const sorted = allProjects
@@ -53,10 +53,14 @@ export default async function ProjectsPage() {
 			<div className="px-6 pt-20 mx-auto space-y-8 max-w-7xl lg:px-8 md:space-y-16 md:pt-24 lg:pt-32">
 				<div className="max-w-2xl mx-auto lg:mx-0">
 					<h2 className="text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
-						Projects
+						Projets
 					</h2>
 					<p className="mt-4 text-zinc-400">
-						Some of the projects are from work and some are on my own time.
+						Voici un regroupement de tous mes projets (site/application).
+						<br />
+						<span className="text-sm italic">
+							PS : Vous pouvez télécharger les applications
+						</span>
 					</p>
 				</div>
 				<div className="w-full h-px bg-zinc-800" />
@@ -94,9 +98,10 @@ export default async function ProjectsPage() {
 								<p className="mt-4 leading-8 duration-150 text-zinc-400 group-hover:text-zinc-300">
 									{featured.description}
 								</p>
+								<br></br>
 								<div className="absolute bottom-4 md:bottom-8">
 									<p className="hidden text-zinc-200 hover:text-zinc-50 lg:block">
-										Read more <span aria-hidden="true">&rarr;</span>
+										En savoir plus <span aria-hidden="true">&rarr;</span>
 									</p>
 								</div>
 							</article>
@@ -104,7 +109,7 @@ export default async function ProjectsPage() {
 					</Card>
 
 					<div className="flex flex-col w-full gap-8 mx-auto border-t border-gray-900/10 lg:mx-0 lg:border-t-0 ">
-						{[top2, top3].map((project) => (
+						{[top2, top3].filter(Boolean).map((project) => (
 							<Card key={project.slug}>
 								<Article project={project} views={views[project.slug] ?? 0} />
 							</Card>
