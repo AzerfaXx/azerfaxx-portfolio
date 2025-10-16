@@ -1,6 +1,15 @@
 import Link from "next/link";
 import React from "react";
 import { allProjects } from "contentlayer/generated";
+console.log(
+  "📄 Projects détectés par Contentlayer:",
+  allProjects.map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    published: p.published,
+  }))
+)
+
 import { Navigation } from "../components/nav";
 import { Card } from "../components/card";
 import { Article } from "./article";
