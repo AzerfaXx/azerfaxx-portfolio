@@ -1,15 +1,6 @@
 import Link from "next/link";
 import React from "react";
 import { allProjects } from "contentlayer/generated";
-console.log(
-  "📄 Projects détectés par Contentlayer:",
-  allProjects.map((p) => ({
-    slug: p.slug,
-    title: p.title,
-    published: p.published,
-  }))
-)
-
 import { Navigation } from "../components/nav";
 import { Card } from "../components/card";
 import { Article } from "./article";
@@ -40,7 +31,7 @@ export default async function ProjectsPage() {
 	}
 
 	const featured = allProjects.find((project) => project.slug === "tasklife")!;
-	const top2 = allProjects.find((project) => project.slug === "planetfall")!;
+	const top2 = allProjects.find((project) => project.slug === "starblaze")!;
 	const top3 = allProjects.find((project) => project.slug === "highstorm")!;
 	const sorted = allProjects
 		.filter((p) => p.published)
