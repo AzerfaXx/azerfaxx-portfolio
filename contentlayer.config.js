@@ -11,9 +11,13 @@ const computedFields = {
 		resolve: (doc) => `/${doc._raw.flattenedPath}`,
 	},
 	slug: {
-		type: "string",
-		resolve: (doc) => doc._raw.flattenedPath.split("/").slice(1).join("/"),
-	},
+  type: "string",
+  resolve: (doc) => {
+    // Normalise les backslashes Windows en slashes Linux
+    const path = doc._raw.flattenedPath.replace(/\\/g, "/");
+    return path.split("/").slice(1).join("/");
+  },
+},
 };
 
 export const Project = defineDocumentType(() => ({
