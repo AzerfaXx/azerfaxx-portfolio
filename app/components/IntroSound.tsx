@@ -4,31 +4,47 @@ import { useEffect, useRef } from "react";
 
 export function IntroSound() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasPlayedRef = useRef(false);
 
   useEffect(() => {
-    // Crée l'objet audio
+    // Prépare le son
     audioRef.current = new Audio("/son/intro.mp3");
     audioRef.current.volume = 0.5;
 
-    // Essaie de jouer le son (certains navigateurs bloquent sans interaction)
-    const playAudio = () => {
-      if (!audioRef.current) return;
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch((err) => {
-        console.warn("Lecture audio bloquée :", err);
-      });
+    const playAudio = async () => {
+      if (!audioRef.current || hasPlayedRef.current) return;
+      try {
+        await audioRef.current.play();
+        hasPlayedRef.current = true;
+        // console.log("🎵 Son joué");
+      } catch {
+        // Attente d'une interaction
+      }
     };
 
-    // Joue automatiquement à l'arrivée
+    // 1️⃣ Tente de jouer directement
     playAudio();
 
-    // Rejoue si l'utilisateur revient sur l’onglet
-    window.addEventListener("focus", playAudio);
+    // 2️⃣ Si refusé, attend la première interaction
+    const onFirstInteraction = () => {
+      playAudio();
+      window.removeEventListener("click", onFirstInteraction);
+      window.removeEventListener("keydown", onFirstInteraction);
+      window.removeEventListener("scroll", onFirstInteraction);
+    };
+
+    window.addEventListener("click", onFirstInteraction);
+    window.addEventListener("keydown", onFirstInteraction);
+    window.addEventListener("scroll", onFirstInteraction);
+
+    // Nettoyage
     return () => {
-      window.removeEventListener("focus", playAudio);
+      window.removeEventListener("click", onFirstInteraction);
+      window.removeEventListener("keydown", onFirstInteraction);
+      window.removeEventListener("scroll", onFirstInteraction);
       audioRef.current?.pause();
     };
   }, []);
 
-  return null; // pas d'affichage à l’écran
+  return null;
 }
