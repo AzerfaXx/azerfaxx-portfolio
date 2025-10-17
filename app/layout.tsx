@@ -4,6 +4,10 @@ import LocalFont from "@next/font/local";
 import { Metadata } from "next";
 import { Analytics } from "./components/analytics";
 
+import ClickSound from "./components/ClickSound";
+
+import { IntroProvider } from "./context/IntroContext";
+
 export const metadata: Metadata = {
   title: {
     default: "AzerfaXx | Portfolio",
@@ -69,7 +73,10 @@ export default function RootLayout({
         className={`bg-black ${process.env.NODE_ENV === "development" ? "debug-screens" : undefined
           }`}
       >
+        <IntroProvider>
+        <ClickSound />
         {children}
+        </IntroProvider>
       </body>
     </html>
   );
