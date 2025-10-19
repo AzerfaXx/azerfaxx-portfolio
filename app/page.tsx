@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useRef, useEffect } from "react";
+import { useContext, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Particles from "./components/particles";
@@ -14,45 +14,24 @@ const navigation = [
 export default function Home() {
   const { hasLaunched, setHasLaunched } = useContext(IntroContext);
 
-  // Références pour les deux audios
-  const introAudioRef = useRef<HTMLAudioElement | null>(null);
-  const spaceAudioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Initialisation unique des audios
-  useEffect(() => {
-    if (!introAudioRef.current) {
-      introAudioRef.current = new Audio("/son/intro.mp3");
-      introAudioRef.current.volume = 0.5;
-    }
-    if (!spaceAudioRef.current) {
-      spaceAudioRef.current = new Audio("/son/space.mp3");
-      spaceAudioRef.current.volume = 0.3;
-      spaceAudioRef.current.loop = true; // Boucle infinie pour éviter relance
-    }
-  }, []);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleStart = async () => {
     if (hasLaunched) return;
 
+    if (!audioRef.current) {
+      audioRef.current = new Audio("/son/intro.mp3");
+      audioRef.current.volume = 0.5;
+    }
+
     try {
-      await introAudioRef.current?.play();
-      setHasLaunched(true);
+      await audioRef.current.play();
     } catch (err) {
       console.warn("Lecture audio bloquée par le navigateur :", err);
     }
-  };
 
-  // Transition entre intro et space audio une seule fois
-  useEffect(() => {
-    const introAudio = introAudioRef.current;
-    if (hasLaunched && introAudio) {
-      const handleEnded = () => {
-        spaceAudioRef.current?.play();
-      };
-      introAudio.addEventListener('ended', handleEnded, { once: true }); // { once: true } pour exécuter seulement une fois
-      return () => introAudio.removeEventListener('ended', handleEnded);
-    }
-  }, [hasLaunched]);
+    setHasLaunched(true);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black">

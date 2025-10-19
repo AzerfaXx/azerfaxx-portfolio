@@ -92,8 +92,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span className="wave-animation"></span>
           </button>
 
-          <audio id="introAudio" src="/audio/intro.mp3" preload="auto"></audio>
-          <audio id="spaceAudio" src="/audio/space.mp3" preload="auto" loop></audio>
+          <audio id="introAudio" src="/son/intro.mp3" preload="auto"></audio>
+          <audio id="spaceAudio" src="/son/space.mp3" preload="auto" loop></audio>
 
           <script
             dangerouslySetInnerHTML={{
@@ -114,7 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 display: block;
                 width: 100%;
                 height: 100%;
-                background: url('/audio/wave.png') no-repeat center;
+                background: url('/son/wave.png') no-repeat center;
                 background-size: contain;
                 transition: transform 0.3s ease;
               }
