@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { Analytics } from "./components/analytics";
 import ClickSound from "./components/ClickSound";
 import { IntroProvider } from "./context/IntroContext";
+import MusicToggle from "./components/MusicToggle";
 
 export const metadata: Metadata = {
   title: {
@@ -72,42 +73,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <IntroProvider>
           <ClickSound />
           {children}
-          {/* Bouton de contrôle global de la musique */}
-          <button
-            id="musicToggle"
-            className="fixed top-4 right-4 w-12 h-12 bg-transparent border-none flex items-center justify-center text-transparent shadow-none transition-all duration-300"
-            onClick={() => {
-              const spaceAudio = document.getElementById("spaceAudio") as HTMLAudioElement | null;
-              if (spaceAudio) {
-                if (spaceAudio.paused) {
-                  spaceAudio.play();
-                } else {
-                  spaceAudio.pause();
-                }
-                const button = document.getElementById("musicToggle");
-                if (button) button.classList.toggle("playing", !spaceAudio.paused);
-              }
-            }}
-          >
-            <span className="wave-animation"></span>
-          </button>
-
+          <MusicToggle />
           <audio id="introAudio" src="/son/intro.mp3" preload="auto"></audio>
           <audio id="spaceAudio" src="/son/space.mp3" preload="auto" loop></audio>
-
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                const introAudio = document.getElementById('introAudio');
-                const spaceAudio = document.getElementById('spaceAudio');
-                const musicToggle = document.getElementById('musicToggle');
-                introAudio.play();
-                introAudio.onended = () => {
-                  spaceAudio.play();
-                };
-              `,
-            }}
-          />
           <style>
             {`
               .wave-animation {
