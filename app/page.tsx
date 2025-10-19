@@ -115,41 +115,9 @@ export default function Home() {
                 </Link>
               </h2>
             </div>
-            {/* Bouton de contrôle de la musique - Style glassmorphic sobre */}
-            <button
-              id="musicToggle"
-              className="fixed bottom-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-white/20 transition-all duration-300"
-              onClick={() => {
-                if (spaceAudioRef.current) {
-                  if (spaceAudioRef.current.paused) {
-                    spaceAudioRef.current.play();
-                  } else {
-                    spaceAudioRef.current.pause();
-                  }
-                  const button = document.getElementById("musicToggle");
-                  if (button) button.classList.toggle("playing", !spaceAudioRef.current.paused);
-                }
-              }}
-            >
-              <span id="musicIcon" className="text-lg">🎵</span>
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Styles pour l'animation du bouton */}
-      <style>
-        {`
-          #musicToggle.playing {
-            animation: pulse 1.5s infinite;
-          }
-          @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-          }
-        `}
-      </style>
     </div>
   );
 }
