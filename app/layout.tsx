@@ -3,9 +3,10 @@ import { Inter } from "@next/font/google";
 import LocalFont from "@next/font/local";
 import { Metadata } from "next";
 import { Analytics } from "./components/analytics";
+
 import ClickSound from "./components/ClickSound";
+
 import { IntroProvider } from "./context/IntroContext";
-import MusicToggle from "./components/MusicToggle";
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     locale: "fr-FR",
     type: "website",
   },
-  metadataBase: new URL("https://azerfaxx.vercel.app"),
+  metadataBase: new URL("https://azerfaxx.vercel.app"), // ✅ ajouté
   robots: {
     index: true,
     follow: true,
@@ -48,7 +49,6 @@ export const metadata: Metadata = {
     shortcut: "/favicon.png",
   },
 };
-
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -59,23 +59,23 @@ const calSans = LocalFont({
   variable: "--font-calsans",
 });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className={[inter.variable, calSans.variable].join(" ")}>
       <head>
         <Analytics />
       </head>
       <body
-        className={`bg-black ${
-          process.env.NODE_ENV === "development" ? "debug-screens" : undefined
-        }`}
+        className={`bg-black ${process.env.NODE_ENV === "development" ? "debug-screens" : undefined
+          }`}
       >
         <IntroProvider>
-          <ClickSound />
-          {children}
-          <MusicToggle />
-          <audio id="introAudio" src="/son/intro.mp3" preload="auto"></audio>
-          <audio id="spaceAudio" src="/son/space.mp3" preload="auto" loop></audio>
+        <ClickSound />
+        {children}
         </IntroProvider>
       </body>
     </html>
