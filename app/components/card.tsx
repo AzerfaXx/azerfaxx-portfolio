@@ -24,7 +24,7 @@ export const Card: React.FC<PropsWithChildren> = ({ children }) => {
 	// 👇 Fonction pour jouer le son "woosh"
 	const playHoverSound = () => {
 		const audio = new Audio("/son/woosh.mp3");
-		audio.volume = 0.05; // Volume réglé à 5% pour un effet subtil
+		audio.volume = 0.03; // Volume réglé à 5% pour un effet subtil
 		audio.play().catch(e => console.error("Erreur de lecture audio:", e));
 	};
 
