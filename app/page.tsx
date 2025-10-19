@@ -18,7 +18,7 @@ export default function Home() {
   const introAudioRef = useRef<HTMLAudioElement | null>(null);
   const spaceAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Initialisation unique des audios
+  // Initialisation et lecture des audios à chaque chargement
   useEffect(() => {
     if (!introAudioRef.current) {
       introAudioRef.current = new Audio("/son/intro.mp3");
@@ -27,32 +27,39 @@ export default function Home() {
     if (!spaceAudioRef.current) {
       spaceAudioRef.current = new Audio("/son/space.mp3");
       spaceAudioRef.current.volume = 0.3;
-      spaceAudioRef.current.loop = true; // Boucle infinie pour éviter relance
+      spaceAudioRef.current.loop = false; // Pas de boucle pour redémarrer à chaque visite
     }
-  }, []);
 
-  const handleStart = async () => {
+    const playIntro = async () => {
+      try {
+        await introAudioRef.current?.play();
+        introAudioRef.current!.onended = () => {
+          spaceAudioRef.current?.play();
+        };
+      } catch (err) {
+        console.warn("Lecture audio bloquée par le navigateur :", err);
+      }
+    };
+    playIntro();
+
+    // Nettoyage pour arrêter les audios au démontage (quand on quitte la page)
+    return () => {
+      if (introAudioRef.current) {
+        introAudioRef.current.pause();
+        introAudioRef.current.currentTime = 0;
+        introAudioRef.current.onended = null;
+      }
+      if (spaceAudioRef.current) {
+        spaceAudioRef.current.pause();
+        spaceAudioRef.current.currentTime = 0;
+      }
+    };
+  }, []); // Effet exécuté à chaque montage, pas lié à hasLaunched
+
+  const handleStart = () => {
     if (hasLaunched) return;
-
-    try {
-      await introAudioRef.current?.play();
-      setHasLaunched(true);
-    } catch (err) {
-      console.warn("Lecture audio bloquée par le navigateur :", err);
-    }
+    setHasLaunched(true); // Déclenche la transition vers le contenu principal
   };
-
-  // Transition entre intro et space audio une seule fois
-  useEffect(() => {
-    const introAudio = introAudioRef.current;
-    if (hasLaunched && introAudio) {
-      const handleEnded = () => {
-        spaceAudioRef.current?.play();
-      };
-      introAudio.addEventListener('ended', handleEnded, { once: true }); // { once: true } pour exécuter seulement une fois
-      return () => introAudio.removeEventListener('ended', handleEnded);
-    }
-  }, [hasLaunched]);
 
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black">
@@ -115,41 +122,9 @@ export default function Home() {
                 </Link>
               </h2>
             </div>
-            {/* Bouton de contrôle de la musique - Style glassmorphic sobre */}
-            <button
-              id="musicToggle"
-              className="fixed bottom-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-white/20 transition-all duration-300"
-              onClick={() => {
-                if (spaceAudioRef.current) {
-                  if (spaceAudioRef.current.paused) {
-                    spaceAudioRef.current.play();
-                  } else {
-                    spaceAudioRef.current.pause();
-                  }
-                  const button = document.getElementById("musicToggle");
-                  if (button) button.classList.toggle("playing", !spaceAudioRef.current.paused);
-                }
-              }}
-            >
-              <span id="musicIcon" className="text-lg">🎵</span>
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Styles pour l'animation du bouton */}
-      <style>
-        {`
-          #musicToggle.playing {
-            animation: pulse 1.5s infinite;
-          }
-          @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-          }
-        `}
-      </style>
     </div>
   );
 }
