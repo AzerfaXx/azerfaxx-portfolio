@@ -1,12 +1,10 @@
-// app/page.tsx
-
 "use client";
 
-import { useContext, useRef } from "react"; // <-- 1. Importer useContext
+import { useContext, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Particles from "./components/particles";
-import { IntroContext } from "./context/IntroContext"; // <-- 2. Importer le contexte
+import { IntroContext } from "./context/IntroContext";
 
 const navigation = [
   { name: "Projets", href: "/projects" },
@@ -14,30 +12,47 @@ const navigation = [
 ];
 
 export default function Home() {
-  // 3. On récupère l'état global au lieu d'utiliser un état local
   const { hasLaunched, setHasLaunched } = useContext(IntroContext);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Références pour les deux audios
+  const introAudioRef = useRef<HTMLAudioElement | null>(null);
+  const spaceAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleStart = async () => {
-    // Si l'intro a déjà été lancée, on ne fait rien
     if (hasLaunched) return;
 
-    // Création et lancement de l'audio au moment du clic
-    if (!audioRef.current) {
-      audioRef.current = new Audio("/son/intro.mp3");
-      audioRef.current.volume = 0.5;
+    if (!introAudioRef.current) {
+      introAudioRef.current = new Audio("/son/intro.mp3"); // Chemin corrigé
+      introAudioRef.current.volume = 0.5;
     }
 
     try {
-      await audioRef.current.play();
+      await introAudioRef.current.play();
+      setHasLaunched(true);
     } catch (err) {
       console.warn("Lecture audio bloquée par le navigateur :", err);
     }
-    
-    // 4. On met à jour l'état GLOBAL pour dire que l'intro est passée
-    setHasLaunched(true);
   };
+
+  // Gestion de la transition entre intro et space audio
+  useEffect(() => {
+    if (hasLaunched && introAudioRef.current) {
+      introAudioRef.current.onended = () => {
+        if (spaceAudioRef.current) {
+          spaceAudioRef.current.play();
+        }
+      };
+    }
+  }, [hasLaunched]);
+
+  // Initialisation du bouton musique
+  useEffect(() => {
+    if (!spaceAudioRef.current) {
+      spaceAudioRef.current = new Audio("/son/space.mp3");
+      spaceAudioRef.current.loop = true; // Boucle pour space.mp3
+      spaceAudioRef.current.volume = 0.3; // Volume initial (ajustable)
+    }
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black">
@@ -47,8 +62,7 @@ export default function Home() {
       />
 
       <AnimatePresence>
-        {!hasLaunched ? ( // <-- 5. On utilise l'état global pour la condition
-          // Écran d'intro
+        {!hasLaunched ? (
           <motion.div
             key="intro"
             initial={{ opacity: 1 }}
@@ -62,7 +76,6 @@ export default function Home() {
             </h1>
           </motion.div>
         ) : (
-          // Contenu principal
           <motion.div
             key="home"
             initial={{ opacity: 0 }}
@@ -70,7 +83,6 @@ export default function Home() {
             transition={{ duration: 1.2, ease: "easeInOut" }}
             className="flex flex-col items-center justify-center w-full h-full"
           >
-            {/* ... Tout ton contenu d'accueil ... */}
             <nav className="my-16 animate-fade-in">
               <ul className="flex items-center justify-center gap-4">
                 {navigation.map((item) => (
@@ -103,9 +115,42 @@ export default function Home() {
                 </Link>
               </h2>
             </div>
+            {/* Bouton de contrôle de la musique */}
+            <button
+              id="musicToggle"
+              className="fixed bottom-4 right-4 w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-blue-600 transition-all duration-300"
+              onClick={() => {
+                if (spaceAudioRef.current) {
+                  const isPlaying = spaceAudioRef.current.paused;
+                  if (isPlaying) {
+                    spaceAudioRef.current.play();
+                  } else {
+                    spaceAudioRef.current.pause();
+                  }
+                  const button = document.getElementById("musicToggle");
+                  if (button) button.classList.toggle("playing", !isPlaying);
+                }
+              }}
+            >
+              <span id="musicIcon" className="text-xl">🎵</span>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Styles pour l'animation du bouton */}
+      <style>
+        {`
+          #musicToggle.playing {
+            animation: pulse 1.5s infinite;
+          }
+          @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+          }
+        `}
+      </style>
     </div>
   );
 }
