@@ -76,26 +76,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <MusicToggle />
           <audio id="introAudio" src="/son/intro.mp3" preload="auto"></audio>
           <audio id="spaceAudio" src="/son/space.mp3" preload="auto" loop></audio>
-          <style>
-            {`
-              .wave-animation {
-                display: block;
-                width: 100%;
-                height: 100%;
-                background: url('/son/wave.png') no-repeat center;
-                background-size: contain;
-                transition: transform 0.3s ease;
-              }
-              #musicToggle.playing .wave-animation {
-                animation: wavePulse 1.5s infinite;
-              }
-              @keyframes wavePulse {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.2); }
-                100% { transform: scale(1); }
-              }
-            `}
-          </style>
         </IntroProvider>
       </body>
     </html>
