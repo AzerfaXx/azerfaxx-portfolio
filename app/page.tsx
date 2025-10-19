@@ -18,41 +18,41 @@ export default function Home() {
   const introAudioRef = useRef<HTMLAudioElement | null>(null);
   const spaceAudioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Initialisation unique des audios
+  useEffect(() => {
+    if (!introAudioRef.current) {
+      introAudioRef.current = new Audio("/son/intro.mp3");
+      introAudioRef.current.volume = 0.5;
+    }
+    if (!spaceAudioRef.current) {
+      spaceAudioRef.current = new Audio("/son/space.mp3");
+      spaceAudioRef.current.volume = 0.3;
+      spaceAudioRef.current.loop = true; // Boucle infinie pour éviter relance
+    }
+  }, []);
+
   const handleStart = async () => {
     if (hasLaunched) return;
 
-    if (!introAudioRef.current) {
-      introAudioRef.current = new Audio("/son/intro.mp3"); // Chemin corrigé
-      introAudioRef.current.volume = 0.5;
-    }
-
     try {
-      await introAudioRef.current.play();
+      await introAudioRef.current?.play();
       setHasLaunched(true);
     } catch (err) {
       console.warn("Lecture audio bloquée par le navigateur :", err);
     }
   };
 
-  // Gestion de la transition entre intro et space audio
+  // Transition entre intro et space audio une seule fois
   useEffect(() => {
-    if (hasLaunched && introAudioRef.current) {
-      introAudioRef.current.onended = () => {
-        if (spaceAudioRef.current) {
-          spaceAudioRef.current.play();
-        }
+    const introAudio = introAudioRef.current;
+    if (hasLaunched && introAudio) {
+      const handleEnded = () => {
+        spaceAudioRef.current?.play();
       };
+      introAudio.addEventListener('ended', handleEnded, { once: true }); // { once: true } pour exécuter seulement une fois
+      return () => introAudio.removeEventListener('ended', handleEnded);
     }
   }, [hasLaunched]);
-
-  // Initialisation du bouton musique
-  useEffect(() => {
-    if (!spaceAudioRef.current) {
-      spaceAudioRef.current = new Audio("/son/space.mp3");
-      spaceAudioRef.current.loop = true; // Boucle pour space.mp3
-      spaceAudioRef.current.volume = 0.3; // Volume initial (ajustable)
-    }
-  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black">
@@ -115,24 +115,23 @@ export default function Home() {
                 </Link>
               </h2>
             </div>
-            {/* Bouton de contrôle de la musique */}
+            {/* Bouton de contrôle de la musique - Style glassmorphic sobre */}
             <button
               id="musicToggle"
-              className="fixed bottom-4 right-4 w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-blue-600 transition-all duration-300"
+              className="fixed bottom-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-white/20 transition-all duration-300"
               onClick={() => {
                 if (spaceAudioRef.current) {
-                  const isPlaying = spaceAudioRef.current.paused;
-                  if (isPlaying) {
+                  if (spaceAudioRef.current.paused) {
                     spaceAudioRef.current.play();
                   } else {
                     spaceAudioRef.current.pause();
                   }
                   const button = document.getElementById("musicToggle");
-                  if (button) button.classList.toggle("playing", !isPlaying);
+                  if (button) button.classList.toggle("playing", !spaceAudioRef.current.paused);
                 }
               }}
             >
-              <span id="musicIcon" className="text-xl">🎵</span>
+              <span id="musicIcon" className="text-lg">🎵</span>
             </button>
           </motion.div>
         )}
